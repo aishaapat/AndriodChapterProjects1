@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="410dp"
+        android:layout_height="101dp"
+        android:layout_marginTop="626dp"
+        android:layout_marginBottom="1dp"
+        android:background="#1A1A48"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/contactslistbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="87dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/button_to_display_contacts"
+            app:srcCompat="@android:drawable/btn_star_big_on"
+            tools:ignore="RedundantDescriptionCheck" />
+
+        <ImageButton
+            android:id="@+id/mapsicon"
+            android:layout_width="wrap_content"
+            android:layout_height="87dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/button_to_display_maps"
+            app:srcCompat="@drawable/mapicon"
+            tools:ignore="RedundantDescriptionCheck" />
+
+        <ImageButton
+            android:id="@+id/settingsicon"
+            android:layout_width="wrap_content"
+            android:layout_height="87dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/button_to_display_setting"
+            app:srcCompat="@drawable/settingsicon"
+            tools:ignore="RedundantDescriptionCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="577dp"
+        android:background="#BEBEBE"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/layout1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ToggleButton
+            android:id="@+id/editbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/togglebutton1"
+            tools:ignore="VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/savebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save1"
+            tools:ignore="VisualLintButtonSize" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/ScrollView"
+        android:layout_width="409dp"
+        android:layout_height="576dp"
+        android:layout_marginStart="2dp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout2"
+        app:layout_contstraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/enterName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter contact"
+            tools:ignore="HardcodedText"
+            />
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

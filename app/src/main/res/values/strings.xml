@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AndriodChapterProjects</string>
+    <string name="button_to_display_contacts">button to display contacts</string>
+    <string name="button_to_display_maps">button to display maps</string>
+    <string name="button_to_display_setting">button to display setting</string>
+    <string name="togglebutton">ToggleButton</string>
+    <string name="save">Save</string>
+    <string name="togglebutton1">ToggleButton</string>
+    <string name="save1">Save</string>
+    <string name="enter_contact">Enter Contact</string>
+</resources>
