@@ -2,10 +2,12 @@ package com.example.andriodchapterprojects;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.activity.EdgeToEdge;
@@ -15,7 +17,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Calendar;
+
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.SaveDateListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         initSettingsButton();
         initToggleButton();
         setForEditing(false);
+        initChangeDateButton();
     }
     private void initListButton(){
         ImageButton ibList=findViewById(R.id.contactslistbutton);
@@ -102,15 +107,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    private void initChangeDateButton(){
-        Button changeDate=findViewById(R.id.btnBirthday);
-        changeDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm=getSupportFragmentManager();
-                DatePickerDialog datePickerDialog=new DatePickerDialog();
-
-            }
+    private void initChangeDateButton() {
+        Button changeDate = findViewById(R.id.btnBirthday);
+        changeDate.setOnClickListener(v -> {
+            // Get the current date as the default selected date
+            Calendar calendar = Calendar.getInstance();
+            // Pass the current date to the DatePickerDialog
+            DatePickerDialog datePickerDialog = new DatePickerDialog(calendar);
+            datePickerDialog.show(getSupportFragmentManager(), "date_picker");
         });
+    }
+
+    @Override
+    public void didFinishDatePickerDialog(Calendar selectedTime) {
+        // Set the selected date in your TextView
+        TextView birthDay = findViewById(R.id.textBirthday);
+        birthDay.setText(DateFormat.format("MM/dd/yyyy", selectedTime));
     }
 }
