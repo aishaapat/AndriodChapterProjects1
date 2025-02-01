@@ -1,4 +1,4 @@
-package com.example.andriodchapterprojects;
+package com.example.andriodchapterprojects.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentManager;
+
+import com.example.andriodchapterprojects.Fragments.DatePickerDialog;
+import com.example.andriodchapterprojects.R;
 
 import java.util.Calendar;
 
@@ -37,8 +39,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         initToggleButton();
         setForEditing(false);
         initChangeDateButton();
+        initSavebutton();
     }
-    private void initListButton(){
+    public void initListButton(){
         ImageButton ibList=findViewById(R.id.contactslistbutton);
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
     }
-    private void initMapButton(){
+    public void initMapButton(){
         ImageButton ibList=findViewById(R.id.mapsicon);
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
     }
-    private void initSettingsButton(){
+    public void initSettingsButton(){
         ImageButton ibList=findViewById(R.id.settingsicon);
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,9 +122,21 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     @Override
-    public void didFinishDatePickerDialog(Calendar selectedTime) {
+    public void didFinishDatePickerDialog(Calendar selectedTime)
+    {
         // Set the selected date in your TextView
         TextView birthDay = findViewById(R.id.textBirthday);
         birthDay.setText(DateFormat.format("MM/dd/yyyy", selectedTime));
+    }
+    public void initSavebutton(){
+        Button ibList=findViewById(R.id.savebutton);
+        ibList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this, SettingsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
     }
 }

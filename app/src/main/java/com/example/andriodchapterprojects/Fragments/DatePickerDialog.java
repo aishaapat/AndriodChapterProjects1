@@ -1,22 +1,20 @@
-package com.example.andriodchapterprojects;
+package com.example.andriodchapterprojects.Fragments;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.app.Dialog;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 
+import com.example.andriodchapterprojects.R;
 
 import java.util.Calendar;
 
@@ -49,19 +47,25 @@ public class DatePickerDialog  extends DialogFragment
         Button btnSave = view.findViewById(R.id.buttonSelect);
         Button cancel=view.findViewById(R.id.buttonCancel);
 
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                selectedDate.set(year,month,dayOfMonth);
+            }
+        });
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveItem(selectedDate);
+            }
+        });
+
         cancel.setOnClickListener(v->{
             getDialog().dismiss();
         });
 
-        // Set up the save button click listener
-        btnSave.setOnClickListener(v -> {
-            long selectedDateInMillis = calendarView.getDate();
 
-            // Create a Calendar object using the milliseconds
-            Calendar selectedCalendar = Calendar.getInstance();
-            selectedCalendar.setTimeInMillis(selectedDateInMillis);
-            saveItem(selectedDate);
-        });
+
 
         // Set the view for the dialog and create it
         builder.setView(view);
