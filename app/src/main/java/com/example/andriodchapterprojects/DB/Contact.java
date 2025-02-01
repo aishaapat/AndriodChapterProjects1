@@ -26,6 +26,10 @@ public class Contact
         this.eMail = eMail;
         this.birthday = birthday;
     }
+    public Contact(){
+        contactID=-1;
+        birthday=Calendar.getInstance();
+    }
 
     public int getContactID() {
         return contactID;
