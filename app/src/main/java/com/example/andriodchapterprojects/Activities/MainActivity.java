@@ -20,9 +20,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.andriodchapterprojects.DB.Contact;
+import com.example.andriodchapterprojects.DB.ContactDataSource;
 import com.example.andriodchapterprojects.Fragments.DatePickerDialog;
 import com.example.andriodchapterprojects.R;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.SaveDateListener {
@@ -278,5 +280,38 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         eHomecell.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         eCell.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
     }
+    private void initSaveButton(){
+        Button saveBtn=findViewById(R.id.savebutton);
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean wasSuccess;
+                ContactDataSource ds=new ContactDataSource(MainActivity.this);
+                try{
+                    ds.open();
+                    if(currentContact.getContactID()==-1){
+                        wasSuccess=ds.insertContact(currentContact);
+                    }
+                    else{
+                        //these methods return a boolean
+                        wasSuccess=ds.updateContact(currentContact);
+                    }
+                    ds.close();
+
+                } catch (SQLException e) {
+                    wasSuccess=false;
+
+                }
+                if(wasSuccess){
+                    ToggleButton edit=findViewById(R.id.editbutton);
+                    edit.toggle();
+                    setForEditing(false);
+                }
+
+            }
+        });
+    }
+    //hid keyboard method
+
 
 }

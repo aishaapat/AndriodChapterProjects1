@@ -13,7 +13,7 @@ public class ContactDataSource
     private SQLiteDatabase database;
     private ContactDBHelper dbHelper;
 
-    private  ContactDataSource(Context context){
+    public ContactDataSource(Context context){
         dbHelper=new ContactDBHelper(context);
     }
     public void open() throws SQLException {
