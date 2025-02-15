@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent=new Intent(MainActivity.this, SettingsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -307,6 +308,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 if(wasSuccess){
                     ToggleButton edit=findViewById(R.id.editbutton);
                     int newId=ds.getLastContactID();
+
                     currentContact.setContactID(newId);
                     edit.toggle();
                     setForEditing(false);
