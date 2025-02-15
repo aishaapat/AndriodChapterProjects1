@@ -146,12 +146,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         econtactName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                currentContact.setContactName(econtactName.getText().toString());
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                currentContact.setContactName(econtactName.getText().toString());
             }
 
             @Override
@@ -163,12 +163,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         eStreetAdress.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                currentContact.setStreetAddress(eStreetAdress.getText().toString());
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                currentContact.setStreetAddress(eStreetAdress.getText().toString());
             }
 
             @Override
@@ -181,12 +181,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         eCity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                currentContact.setCity(eCity.getText().toString());
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                currentContact.setCity(eCity.getText().toString());
             }
 
             @Override
@@ -198,12 +198,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         eState.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                currentContact.setState(eState.getText().toString());
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                currentContact.setState(eState.getText().toString());
             }
 
             @Override
@@ -215,12 +215,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         eZipcode.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                currentContact.setZipCode(eZipcode.getText().toString());
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                currentContact.setZipCode(eZipcode.getText().toString());
             }
 
             @Override
@@ -232,12 +232,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         eHomecell.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                currentContact.setPhoneNumber(eHomecell.getText().toString());
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                currentContact.setPhoneNumber(eHomecell.getText().toString());
             }
 
             @Override
@@ -249,12 +249,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         eCell.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                currentContact.setCellNumber(eCell.getText().toString());
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                currentContact.setCellNumber(eCell.getText().toString());
             }
 
             @Override
@@ -266,12 +266,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         eMail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                currentContact.seteMail(eMail.getText().toString());
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                currentContact.seteMail(eMail.getText().toString());
             }
 
             @Override
@@ -279,16 +279,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
             }
         });
-        eHomecell.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-        eCell.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
     }
     private void initSaveButton(){
         Button saveBtn=findViewById(R.id.savebutton);
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean wasSuccess;
                 ContactDataSource ds=new ContactDataSource(MainActivity.this);
+                boolean wasSuccess;
+
                 try{
                     ds.open();
                     if(currentContact.getContactID()==-1){
@@ -306,6 +306,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 }
                 if(wasSuccess){
                     ToggleButton edit=findViewById(R.id.editbutton);
+                    int newId=ds.getLastContactID();
+                    currentContact.setContactID(newId);
                     edit.toggle();
                     setForEditing(false);
                 }
