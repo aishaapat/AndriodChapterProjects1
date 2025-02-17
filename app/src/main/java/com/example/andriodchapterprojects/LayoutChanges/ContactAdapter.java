@@ -12,45 +12,40 @@ import com.example.andriodchapterprojects.R;
 
 import java.util.ArrayList;
 
-public class ContactAdapter extends RecyclerView.Adapter{
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
     private ArrayList<String> contactData;
+
+    public ContactAdapter(ArrayList<String> arrayList) {
+        this.contactData = (arrayList != null) ? arrayList : new ArrayList<>();
+    }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_item_view,parent,false);
+    public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_item_view, parent, false);
         return new ContactViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ContactViewHolder cvh=(ContactViewHolder) holder;
-        cvh.getContactTextView().setText(contactData.get(position));
+    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
+        holder.textViewContact.setText(contactData.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return contactData.size();
+        return (contactData != null) ? contactData.size() : 0;
     }
 
-
-    public class ContactViewHolder extends RecyclerView.ViewHolder{
+    public static class ContactViewHolder extends RecyclerView.ViewHolder {
         public TextView textViewContact;
+
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewContact = itemView.findViewById(R.id.textViewName);
         }
-        public TextView getContactTextView(){
-            return textViewContact;
-        }
-
     }
-    public ContactAdapter(ArrayList<String> arrayList){
-        contactData=arrayList;
-    }
-
-
 }
+
 
 
 

@@ -1,7 +1,11 @@
 package com.example.andriodchapterprojects.Activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -34,9 +38,12 @@ public class ContactListActivty extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        showContact();
         initListButton();
         initMapButton();
         initSettingsButton();
+
+
 
     }
     public void initListButton(){
@@ -66,23 +73,23 @@ public class ContactListActivty extends AppCompatActivity {
         });
 
     }
-    public void showContact(){
+    public void showContact() {
         ContactDataSource ds = new ContactDataSource(this);
         ArrayList<String> names;
         try{
-            ds.open();
+            ds.open();;
             names=ds.getContactName();
             ds.close();
             RecyclerView contactList=findViewById(R.id.rvContacts);
             RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this);
             contactList.setLayoutManager(layoutManager);
-            ContactAdapter contactAdapter=new ContactAdapter(names);
+            ContactAdapter contactAdapter = new ContactAdapter(names);
             contactList.setAdapter(contactAdapter);
-
-        } catch (SQLException e)
-        {
-            Toast.makeText(this,"Error retrieving contacts",Toast.LENGTH_LONG).show();
-
+        }
+        catch (Exception e){
+            Toast.makeText(this,"Error retrieving cotnacts",Toast.LENGTH_LONG).show();
         }
     }
+
+
 }
