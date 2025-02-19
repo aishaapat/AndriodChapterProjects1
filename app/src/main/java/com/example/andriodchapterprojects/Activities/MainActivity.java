@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         initSettingsButton();
         initToggleButton();
         Bundle extras=getIntent().getExtras();
-        if(extras !=null) initContact(extras.getInt("contactId"));
+        if(extras !=null) initContact(extras.getInt("contactid"));
         else currentContact=new Contact();
         setForEditing(false);
         initChangeDateButton();

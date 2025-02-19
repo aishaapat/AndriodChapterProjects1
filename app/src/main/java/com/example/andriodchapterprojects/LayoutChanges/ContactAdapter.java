@@ -1,5 +1,6 @@
 package com.example.andriodchapterprojects.LayoutChanges;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ public class ContactAdapter extends RecyclerView.Adapter
 {
     private ArrayList<Contact> contactData;
     private View.OnClickListener mOnItemClickListener;
+
+    private Context context;
 
     @NonNull
     @Override
@@ -71,9 +74,11 @@ public class ContactAdapter extends RecyclerView.Adapter
             return deleteButton;
         }
     }
-    public ContactAdapter(ArrayList<Contact> arrayList)
+    public ContactAdapter(ArrayList<Contact> arrayList, View.OnClickListener onClickListener, Context context)
     {
         contactData=arrayList;
+        mOnItemClickListener=onClickListener;
+        this.context=context;
 
     }
 }
