@@ -45,7 +45,7 @@ public class ContactAdapter extends RecyclerView.Adapter
 
 
     public void setmOnItemClickListener(View.OnClickListener itemClickListener){
-         mOnItemClickListener=itemClickListener;
+         this.mOnItemClickListener=itemClickListener;
     }
 
     public class ContactViewHolder extends RecyclerView.ViewHolder
