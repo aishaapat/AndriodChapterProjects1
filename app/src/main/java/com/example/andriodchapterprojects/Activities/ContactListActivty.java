@@ -8,8 +8,11 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,6 +34,7 @@ import java.util.ArrayList;
 public class ContactListActivty extends AppCompatActivity {
     ArrayList<Contact> contacts;
 
+
     private View.OnClickListener onItemClickListener= new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -42,6 +46,7 @@ public class ContactListActivty extends AppCompatActivity {
             startActivity(intent);
         }
     };
+    ContactAdapter contactAdapter1 = new ContactAdapter(contacts,onItemClickListener,this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,8 @@ public class ContactListActivty extends AppCompatActivity {
         initListButton();
         initMapButton();
         initSettingsButton();
+        initAddContactButtob();
+        initDeleteSwitch(contactAdapter1);
 
 
 
@@ -100,7 +107,7 @@ public class ContactListActivty extends AppCompatActivity {
           RecyclerView contactList=findViewById(R.id.rvContacts);
           RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this);
          contactList.setLayoutManager(layoutManager);
-        ContactAdapter contactAdapter = new ContactAdapter(contacts,onItemClickListener,this);
+       ContactAdapter contactAdapter = new ContactAdapter(contacts,onItemClickListener,this);
         contactList.setAdapter(contactAdapter);
 
        }
@@ -108,6 +115,29 @@ public class ContactListActivty extends AppCompatActivity {
           Toast.makeText(this,"Error retrieving contacts",Toast.LENGTH_LONG).show();
        }
    }
+
+   public void initAddContactButtob(){
+       Button newContact=findViewById(R.id.buttonAddContact);
+       newContact.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent intent=new Intent(ContactListActivty.this,MainActivity.class);
+               startActivity(intent);
+           }
+       });
+   }
+
+    private void initDeleteSwitch(ContactAdapter contactAdapter) {
+        Switch s = findViewById(R.id.switchDelete);
+        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
+                Boolean status = compoundButton.isChecked();
+                contactAdapter.setDelete(status);
+                contactAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
 
 
