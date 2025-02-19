@@ -81,7 +81,7 @@ public class ContactDataSource
         return lastId;
     }
 
-    public ArrayList<Contact> getContactName(){
+    public ArrayList<Contact> getContacts(){
         ArrayList<Contact> contacts=new ArrayList<>();
 
         try{

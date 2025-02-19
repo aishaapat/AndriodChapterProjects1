@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.andriodchapterprojects.DB.Contact;
 import com.example.andriodchapterprojects.DB.ContactDataSource;
 import com.example.andriodchapterprojects.LayoutChanges.ContactAdapter;
 import com.example.andriodchapterprojects.R;
@@ -26,12 +29,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ContactListActivty extends AppCompatActivity {
+    ArrayList<Contact> contacts;
+
     private View.OnClickListener onItemClickListener= new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             RecyclerView.ViewHolder viewHolder=(RecyclerView.ViewHolder) v.getTag();
             int position=viewHolder.getAdapterPosition();
+        int contactId=contacts.get(position).getContactID();
             Intent intent=new Intent(ContactListActivty.this,MainActivity.class);
+            intent.putExtra("contactId",contactId);
             startActivity(intent);
         }
     };
@@ -47,7 +54,7 @@ public class ContactListActivty extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-       // showContact();
+       showContact();
         initListButton();
         initMapButton();
         initSettingsButton();
@@ -82,23 +89,25 @@ public class ContactListActivty extends AppCompatActivity {
         });
 
     }
-//    public void showContact() {
-//        ContactDataSource ds = new ContactDataSource(this);
-//        ArrayList<String> names;
-//        try{
-//            ds.open();;
-//            names=ds.getContactName();
-//            ds.close();
-//            RecyclerView contactList=findViewById(R.id.rvContacts);
-//            RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this);
-//            contactList.setLayoutManager(layoutManager);
-//            ContactAdapter contactAdapter = new ContactAdapter(names);
-//            contactList.setAdapter(contactAdapter);
-//        }
-//        catch (Exception e){
-//            Toast.makeText(this,"Error retrieving cotnacts",Toast.LENGTH_LONG).show();
-//        }
-//    }
+   public void showContact() {
+       ContactDataSource ds = new ContactDataSource(this);
+
+   try{
+          ds.open();;
+         contacts=ds.getContacts();
+
+          ds.close();
+          RecyclerView contactList=findViewById(R.id.rvContacts);
+          RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this);
+         contactList.setLayoutManager(layoutManager);
+        ContactAdapter contactAdapter = new ContactAdapter(contacts);
+        contactList.setAdapter(contactAdapter);
+
+       }
+       catch (Exception e){
+          Toast.makeText(this,"Error retrieving contacts",Toast.LENGTH_LONG).show();
+       }
+   }
 
 
 

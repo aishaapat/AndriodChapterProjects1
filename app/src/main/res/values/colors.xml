@@ -3,4 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="navbar_background">#1a1a48</color>
+    <color name="system_red">#FF0000</color>
+    <color name="system_transparent">#00000000</color>
+    <color name="system_blue">#0000ff</color>
 </resources>
