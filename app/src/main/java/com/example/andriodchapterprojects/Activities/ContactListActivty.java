@@ -38,7 +38,7 @@ public class ContactListActivty extends AppCompatActivity {
             int position=viewHolder.getAdapterPosition();
         int contactId=contacts.get(position).getContactID();
             Intent intent=new Intent(ContactListActivty.this,MainActivity.class);
-            intent.putExtra("contactId",contactId);
+            intent.putExtra("contactid",contactId);
             startActivity(intent);
         }
     };
@@ -100,7 +100,7 @@ public class ContactListActivty extends AppCompatActivity {
           RecyclerView contactList=findViewById(R.id.rvContacts);
           RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this);
          contactList.setLayoutManager(layoutManager);
-        ContactAdapter contactAdapter = new ContactAdapter(contacts);
+        ContactAdapter contactAdapter = new ContactAdapter(contacts,onItemClickListener,this);
         contactList.setAdapter(contactAdapter);
 
        }
