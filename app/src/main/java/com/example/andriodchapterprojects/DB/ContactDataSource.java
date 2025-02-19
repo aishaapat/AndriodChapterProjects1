@@ -81,11 +81,12 @@ public class ContactDataSource
         return lastId;
     }
 
-    public ArrayList<Contact> getContacts(){
+    public ArrayList<Contact> getContacts(String sortField,String sortOrder){
         ArrayList<Contact> contacts=new ArrayList<>();
 
         try{
-            String query="Select * from contact";
+            String query = "SELECT * FROM contact ORDER BY " + sortField + " " + sortOrder;
+
             Cursor cursor=database.rawQuery(query,null);
             Contact newContact;
             cursor.moveToFirst();

@@ -51,6 +51,8 @@ public class ContactAdapter extends RecyclerView.Adapter
                     deleteItem(position);
                 }
             });
+        } else {
+            cvh.getDeleteButton().setVisibility(View.INVISIBLE);
         }
     }
     public void setDelete(boolean b){
