@@ -2,6 +2,8 @@ package com.example.andriodchapterprojects.LayoutChanges;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,10 @@ public class ContactAdapter extends RecyclerView.Adapter
     private boolean isDeleting;
     private Context context;
 
+
+
+
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -42,6 +48,11 @@ public class ContactAdapter extends RecyclerView.Adapter
         ContactViewHolder cvh = (ContactViewHolder) holder;
         cvh.getContactTextView().setText(contactData.get(position).getContactName());
         cvh.getTextphoneView().setText(contactData.get(position).getPhoneNumber());
+
+
+        if (contactData.get(position).getContactID() % 2 != 0) {
+            cvh.getContactTextView().setTextColor(Color.parseColor("#FF0000"));
+        }
 
         if (isDeleting) {
             cvh.getDeleteButton().setVisibility(View.VISIBLE);
@@ -92,6 +103,7 @@ public class ContactAdapter extends RecyclerView.Adapter
         public TextView textViewContact;
         public TextView textphone;
         public Button deleteButton;
+
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewContact = itemView.findViewById(R.id.textContactName);
@@ -109,6 +121,7 @@ public class ContactAdapter extends RecyclerView.Adapter
         public Button getDeleteButton(){
             return deleteButton;
         }
+
     }
     public ContactAdapter(ArrayList<Contact> arrayList, View.OnClickListener onClickListener, Context context)
     {
