@@ -60,8 +60,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     LocationRequest locationRequest;
     LocationCallback locationCallback;
 
-    RadioButton rbNormal=findViewById(R.id.radioButtonNormal);
-    RadioButton satelitebtn=findViewById(R.id.radioButtonSatellite);
     ArrayList<Contact> contacts = new ArrayList<>();
     Contact currentContact = null;
 
@@ -160,6 +158,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 locationCallback, null);
         gmap.setMyLocationEnabled(true);
     }
+
     private void stopLocationUpdates () {
         if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getBaseContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -172,61 +171,94 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
         gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        Point size=new Point();
-        WindowManager w = getWindowManager();
-        int measuredWidth=size.x;
-        int measureHeight=size.y;
+
+        RadioButton rbNormal = findViewById(R.id.radioButtonNormal);
+
         rbNormal.setChecked(true);
-        if(contacts.size()>0){
-            LatLngBounds.Builder builder=new LatLngBounds.Builder();
-            for(int i=0;i<contacts.size();i++){
-                currentContact=contacts.get(i);
-                Geocoder geo=new Geocoder(this);
-                List<Address> addresses=null;
-                String address= currentContact.getStreetAddress()+", "+ currentContact.getCity()+" , "+currentContact.getState()+" , "+currentContact.getZipCode();
-                try{
-                    addresses=geo.getFromLocationName(address,1);
+
+        Point size = new Point();
+        WindowManager w = getWindowManager();
+        w.getDefaultDisplay().getSize(size);
+        int measuredWidth = size.x;
+        int measuredHeight = size.y;
+
+        if (contacts.size() > 0) {
+            System.out.println("Triegged");
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (int i = 0; i < contacts.size(); i++) {
+                currentContact = contacts.get(i);
+
+                Geocoder geo = new Geocoder(this);
+
+                List<Address> addresses = null;
+
+                String address = currentContact.getStreetAddress() + ", " +
+                        currentContact.getCity() + ", " +
+                        currentContact.getState() + ", " +
+                        currentContact.getZipCode();
+
+                try {
+                    addresses = geo.getFromLocationName(address, 1);
+
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                LatLng point=new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
-                builder.include(point);
-                gmap.addMarker(new MarkerOptions().position(point).title(currentContact.getContactName()).snippet(address));
-            }
-            gmap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),measuredWidth,measureHeight,450));
-        }
-        else{
-            if (currentContact!= null){
-                Geocoder geocoder=new Geocoder(this);
-                List<Address> addresses=null;
-                String address= currentContact.getStreetAddress()+", "+ currentContact.getCity()+" , "+currentContact.getState()+" , "+currentContact.getZipCode();
-                try{
-                    addresses=geocoder.getFromLocationName(address,1);
-                }
-                catch(IOException e){
                     e.printStackTrace();
                 }
-                LatLng point=new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
+
+                LatLng point = new LatLng(addresses.get(0).getLatitude(),
+                        addresses.get(0).getLongitude());
+
+                builder.include(point);
+
                 gmap.addMarker(new MarkerOptions().position(point).title(currentContact.getContactName()).snippet(address));
-                gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(point,16));
             }
-            else{
-                AlertDialog alertDialog=new AlertDialog.Builder(MapActivity.this).create();
+            gmap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),
+                    measuredWidth, measuredHeight, 450));
+        }
+        else {
+            System.out.println("Triegged else ");
+            if (currentContact != null) {
+                Geocoder geo = new Geocoder(this);
+                List<Address> addresses = null;
+
+                String address = currentContact.getStreetAddress() + ", " +
+                        currentContact.getCity() + ", " +
+                        currentContact.getState() + ", " +
+                        currentContact.getZipCode();
+
+
+                try {
+                    addresses = geo.getFromLocationName(address, 1);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                LatLng point = new LatLng(addresses.get(0).getLatitude(),
+                        addresses.get(0).getLongitude());
+
+                gmap.addMarker(new MarkerOptions().position(point).title(currentContact.getContactName()).snippet(address));
+
+                gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(
+                        MapActivity.this).create();
+
                 alertDialog.setTitle("No data");
-                alertDialog.setMessage("no data available");
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
+                alertDialog.setMessage("No data is available for the mapping function");
+
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,
+                        "OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        });
                 alertDialog.show();
             }
         }
-
         try {
             if (Build.VERSION.SDK_INT >= 23) {
                 if (ContextCompat.checkSelfPermission(MapActivity.this,
@@ -267,14 +299,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     Toast.LENGTH_LONG).show();
         }
     }
+
+
     @Override
     public void onRequestPermissionsResult (int requestCode, String permissions[], int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startLocationUpdates();
-            } else {
-                Toast.makeText(this, "Permission denied!", Toast.LENGTH_LONG).show();
+        switch (requestCode) {
+            case PERMISSION_REQUEST_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startLocationUpdates();
+                } else  {
+                    Toast.makeText(MapActivity.this, "MyContactList will not locate your contacts",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
