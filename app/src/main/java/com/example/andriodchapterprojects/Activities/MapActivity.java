@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,11 +13,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,6 +29,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.andriodchapterprojects.R;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MapActivity extends AppCompatActivity {
     LocationManager locationManager;
@@ -43,7 +50,9 @@ public class MapActivity extends AppCompatActivity {
             return insets;
         });
         initGetLocationButton();
+        initGetNetButton();
     }
+
 
     private void startLocationUpdates() {
         try {
@@ -106,6 +115,14 @@ public class MapActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
+        if(
+                Build.VERSION.SDK_INT>=23 && ContextCompat.checkSelfPermission(getBaseContext(),Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(getBaseContext(),Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        )
+        {
+            return;
+        }
+
         try {
             locationManager.removeUpdates(gpsListener);
         } catch (Exception e) {
@@ -114,33 +131,89 @@ public class MapActivity extends AppCompatActivity {
     }
 
     ///
-    private void initGetLocationButton() {
-        Button locationButton = (Button) findViewById(R.id.buttonGetLocation);
-        locationButton.setOnClickListener(new View.OnClickListener() {
+    private void initGetNetButton() {
+
+        Button button=findViewById(R.id.buttonGetnet);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        locationManager = (LocationManager) getBaseContext().getSystemService(Context.LOCATION_SERVICE);
-                    }
-                    gpsListener = new LocationListener() {
-                        public void onLocationChanged(Location location) {
-                            TextView txtLatitude = (TextView) findViewById(R.id.textLatitude);
-                            TextView txtLongitude = (TextView) findViewById(R.id.textLongitude);
-                            TextView txtAccuracy = (TextView) findViewById(R.id.textAccuracy);
-
-                            txtLatitude.setText(String.valueOf(location.getLatitude()));
-                            txtLongitude.setText(String.valueOf(location.getLongitude()));
-                            txtAccuracy.setText(String.valueOf(location.getAccuracy()));
-                        }
-                        public void onStatusChanged(String provider, int status, Bundle extras){}
-                        public void onProviderEnabled(String provider) {}
-                        public void onProviderDisabled(String provider){}
-                    };
-                } catch (Exception e) {
-                    Toast.makeText(getBaseContext(), "Error, Location not available", Toast.LENGTH_LONG).show();
-
+            public void onClick(View v) {
+                if(
+                        Build.VERSION.SDK_INT>=23 && ContextCompat.checkSelfPermission(getBaseContext(),Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED &&
+                                ContextCompat.checkSelfPermission(getBaseContext(),Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                ){
+                    return;
                 }
+                startLocationUpdates();
+                try{
+                    locationManager=(LocationManager)getBaseContext().getSystemService(Context.LOCATION_SERVICE);
+                    gpsListener=new LocationListener() {
+
+                        @Override
+                        public void onLocationChanged(@NonNull Location location) {
+                            TextView txtLat=(TextView) findViewById(R.id.textLatitude);
+                            TextView txtLong=(TextView) findViewById(R.id.textLongitude);
+                            TextView txtAccur=(TextView) findViewById(R.id.textAccuracy);
+                            txtLat.setText(String.valueOf(location.getLatitude()));
+                            txtLong.setText(String.valueOf(location.getLongitude()));
+                            txtAccur.setText(String.valueOf(location.getAccuracy()));
+                        }
+
+                        @Override
+                        public void onLocationChanged(@NonNull List<Location> locations) {
+
+
+                            LocationListener.super.onLocationChanged(locations);
+                        }
+
+                        @Override
+                        public void onFlushComplete(int requestCode) {
+                            LocationListener.super.onFlushComplete(requestCode);
+                        }
+
+                        @Override
+                        public void onStatusChanged(String provider, int status, Bundle extras) {
+                            LocationListener.super.onStatusChanged(provider, status, extras);
+                        }
+
+                        @Override
+                        public void onProviderEnabled(@NonNull String provider) {
+                            LocationListener.super.onProviderEnabled(provider);
+                        }
+
+                        @Override
+                        public void onProviderDisabled(@NonNull String provider) {
+                            LocationListener.super.onProviderDisabled(provider);
+                        }
+                    };
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,gpsListener);
+                } catch (Exception e) {
+                    Toast.makeText(getBaseContext(),"Error, Location not availble",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void initGetLocationButton(){
+        Button locate=(Button) findViewById(R.id.buttonGetLocation);
+        locate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText editAddress=(EditText) findViewById(R.id.editAddress);
+                EditText editCity=(EditText) findViewById(R.id.editCity);
+                EditText editState=(EditText) findViewById(R.id.editState);
+                EditText editZip=(EditText) findViewById(R.id.editZipcode);
+
+                String address= editAddress.getText().toString()+", "+editCity.getText().toString()+", "+editState.getText().toString()+", "+editZip.getText().toString()+", ";
+                List<Address> addresses=null;
+                Geocoder geo=new Geocoder(MapActivity.this);
+                try{
+                    addresses=geo.getFromLocationName(address,1);
+                }
+                catch (IOException e){e.printStackTrace();}
+                TextView txtLa=(TextView) findViewById(R.id.textLatitude);
+                TextView txtLong=(TextView) findViewById(R.id.textLongitude);
+                txtLa.setText(String.valueOf(addresses.get(0).getLatitude()));
+                txtLong.setText(String.valueOf(addresses.get(0).getLongitude()));
             }
         });
     }

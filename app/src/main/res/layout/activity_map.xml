@@ -131,15 +131,15 @@
 
     <Button
         android:id="@+id/buttonGetLocation"
-        android:layout_width="173dp"
-        android:layout_height="87dp"
+        android:layout_width="125dp"
+        android:layout_height="70dp"
         android:layout_marginStart="163dp"
         android:layout_marginEnd="158dp"
-        android:layout_marginBottom="388dp"
+        android:layout_marginBottom="392dp"
         android:text="GET COORDINATES"
         app:layout_constraintBottom_toTopOf="@+id/layout1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.53"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -208,6 +208,19 @@
         android:text="None"
         app:layout_constraintBottom_toTopOf="@+id/layout1"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/buttonGetnet"
+        android:layout_width="109dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="43dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="396dp"
+        android:text="Get Current Location"
+        app:layout_constraintBottom_toTopOf="@+id/layout1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editZipcode"
+        app:layout_constraintVertical_bias="0.692" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
