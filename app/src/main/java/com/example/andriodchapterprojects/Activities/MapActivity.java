@@ -60,6 +60,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     LocationRequest locationRequest;
     LocationCallback locationCallback;
 
+    RadioButton rbNormal=findViewById(R.id.radioButtonNormal);
+    RadioButton satelitebtn=findViewById(R.id.radioButtonSatellite);
     ArrayList<Contact> contacts = new ArrayList<>();
     Contact currentContact = null;
 
@@ -97,6 +99,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         createLocationRequest();
         createLocationCallback();
+        initMapTypeButtons();
 
 
     }
@@ -176,6 +179,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         WindowManager w = getWindowManager();
         int measuredWidth=size.x;
         int measureHeight=size.y;
+        rbNormal.setChecked(true);
         if(contacts.size()>0){
             LatLngBounds.Builder builder=new LatLngBounds.Builder();
             for(int i=0;i<contacts.size();i++){
@@ -282,5 +286,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return ;
         }
 
+    }
+
+    private void initMapTypeButtons() {
+        RadioGroup rgMapType = findViewById(R.id.radioGroupMapType);
+        rgMapType.setOnCheckedChangeListener (new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                RadioButton rbNormal = findViewById(R.id.radioButtonNormal);
+                if (rbNormal.isChecked()) {
+                    gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                } else {
+                    gmap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                }
+            }
+        });
     }
 }
