@@ -35,8 +35,10 @@ import java.util.List;
 
 public class MapActivity extends AppCompatActivity {
     LocationManager locationManager;
+    Location currentBestLocation;
 
     LocationListener gpsListener;
+    LocationListener networkListener;
     final int PERMISSION_REQUEST_LOCATION = 101;
 
     @Override
@@ -124,7 +126,7 @@ public class MapActivity extends AppCompatActivity {
         }
 
         try {
-            locationManager.removeUpdates(gpsListener);
+            locationManager.removeUpdates(networkListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -150,6 +152,7 @@ public class MapActivity extends AppCompatActivity {
 
                         @Override
                         public void onLocationChanged(@NonNull Location location) {
+                            if (isBetterLocation(location))currentBestLocation=location;
                             TextView txtLat=(TextView) findViewById(R.id.textLatitude);
                             TextView txtLong=(TextView) findViewById(R.id.textLongitude);
                             TextView txtAccur=(TextView) findViewById(R.id.textAccuracy);
@@ -185,12 +188,23 @@ public class MapActivity extends AppCompatActivity {
                             LocationListener.super.onProviderDisabled(provider);
                         }
                     };
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,gpsListener);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,networkListener);
                 } catch (Exception e) {
                     Toast.makeText(getBaseContext(),"Error, Location not availble",Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    private boolean isBetterLocation(Location location){
+        boolean isBetter=false;
+        if (currentBestLocation==null) isBetter=true;
+        else if (location.getAccuracy()<= currentBestLocation.getAccuracy()) {
+            isBetter=true;
+        } else if (location.getTime()-currentBestLocation.getTime()> 5*60*1000) {
+            isBetter=true;
+        }
+        return isBetter;
     }
 
     private void initGetLocationButton(){
