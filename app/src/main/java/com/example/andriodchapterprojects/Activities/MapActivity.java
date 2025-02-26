@@ -68,7 +68,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_map);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_contact_map), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -110,21 +110,105 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
     private void createLocationRequest(){
-        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
-                .setMinUpdateIntervalMillis(10000)
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
+                .setMinUpdateIntervalMillis(5000)
                 .build();
+
+    }
+
+    private void createLocationCallback(){
+        locationCallback=new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                if(locationResult==null) return;
+                for(Location location : locationResult.getLocations()){
+                    Toast.makeText(getBaseContext(),"Lat: " + location.getLatitude()+ " Long: "+ location.getLongitude()+" Accuracy" +
+                            ": "+ location.getAccuracy(),Toast.LENGTH_LONG).show();
+                }
+            }
+        };
     }
 
     private void startLocationUpdates(){
         if(Build.VERSION.SDK_INT>=23 && ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                 getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED){
-
-        }
+                PackageManager.PERMISSION_GRANTED) return;
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        ;
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        gmap = googleMap;
+        gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        LatLng defaultLocation = new LatLng(37.7749, -122.4194); // San Francisco, example
+        gmap.addMarker(new MarkerOptions().position(defaultLocation).title("Default Location"));
+        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12.0f));
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            gmap.setMyLocationEnabled(true);
+            startLocationUpdates();
+        }
+
+        try {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (ContextCompat.checkSelfPermission(MapActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            MapActivity.this,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    )) {
+                        Snackbar.make(findViewById(R.id.activity_contact_map),
+                                        "MyContactList requires this permission to locate " +
+                                                "your contacts", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Ok", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        ActivityCompat.requestPermissions(
+                                                MapActivity.this,
+                                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                                PERMISSION_REQUEST_LOCATION
+                                        );
+
+                                    }
+                                })
+                                .show();
+                    } else {
+                        ActivityCompat.requestPermissions(
+                                MapActivity.this,
+                                new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                                PERMISSION_REQUEST_LOCATION);
+                    }
+                } else {
+                    startLocationUpdates();
+                }
+            } else {
+                startLocationUpdates();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getBaseContext(), "Error requesting permission",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult (int requestCode, String permissions[], int[] grantResults){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startLocationUpdates();
+            } else {
+                Toast.makeText(this, "Permission denied!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return ;
+        }
 
     }
 }
