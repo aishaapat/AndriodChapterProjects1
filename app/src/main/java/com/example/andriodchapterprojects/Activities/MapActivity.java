@@ -31,6 +31,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.andriodchapterprojects.DB.Contact;
+import com.example.andriodchapterprojects.DB.ContactDataSource;
 import com.example.andriodchapterprojects.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -68,6 +69,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_map);
+        Bundle extras=getIntent().getExtras();
+        try{
+            ContactDataSource ds=new ContactDataSource(MapActivity.this);
+            ds.open();
+            if(extras !=null){
+                currentContact=ds.getSpecificContact(extras.getInt("contactid"));
+            }
+            else{
+                contacts=ds.getContacts("contactname","ASC");
+            }
+            ds.close();
+        }
+        catch (Exception e){
+            Toast.makeText(this,"Contact(s) could not be retrieved",Toast.LENGTH_LONG).show();
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_contact_map), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -156,6 +172,56 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull GoogleMap googleMap) {
         gmap = googleMap;
         gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        Point size=new Point();
+        WindowManager w = getWindowManager();
+        int measuredWidth=size.x;
+        int measureHeight=size.y;
+        if(contacts.size()>0){
+            LatLngBounds.Builder builder=new LatLngBounds.Builder();
+            for(int i=0;i<contacts.size();i++){
+                currentContact=contacts.get(i);
+                Geocoder geo=new Geocoder(this);
+                List<Address> addresses=null;
+                String address= currentContact.getStreetAddress()+", "+ currentContact.getCity()+" , "+currentContact.getState()+" , "+currentContact.getZipCode();
+                try{
+                    addresses=geo.getFromLocationName(address,1);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                LatLng point=new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
+                builder.include(point);
+                gmap.addMarker(new MarkerOptions().position(point).title(currentContact.getContactName()).snippet(address));
+            }
+            gmap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),measuredWidth,measureHeight,450));
+        }
+        else{
+            if (currentContact!= null){
+                Geocoder geocoder=new Geocoder(this);
+                List<Address> addresses=null;
+                String address= currentContact.getStreetAddress()+", "+ currentContact.getCity()+" , "+currentContact.getState()+" , "+currentContact.getZipCode();
+                try{
+                    addresses=geocoder.getFromLocationName(address,1);
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                }
+                LatLng point=new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
+                gmap.addMarker(new MarkerOptions().position(point).title(currentContact.getContactName()).snippet(address));
+                gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(point,16));
+            }
+            else{
+                AlertDialog alertDialog=new AlertDialog.Builder(MapActivity.this).create();
+                alertDialog.setTitle("No data");
+                alertDialog.setMessage("no data available");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                alertDialog.show();
+            }
+        }
 
         try {
             if (Build.VERSION.SDK_INT >= 23) {
