@@ -53,6 +53,8 @@ public class MapActivity extends AppCompatActivity {
         });
         initGetLocationButton();
         initGetNetButton();
+        initSettingsButton();
+        initListButton();
     }
 
 
@@ -228,6 +230,31 @@ public class MapActivity extends AppCompatActivity {
                 TextView txtLong=(TextView) findViewById(R.id.textLongitude);
                 txtLa.setText(String.valueOf(addresses.get(0).getLatitude()));
                 txtLong.setText(String.valueOf(addresses.get(0).getLongitude()));
+            }
+        });
+    }
+
+    public void initListButton(){
+        ImageButton ibList=findViewById(R.id.contactslistbutton);
+        ibList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MapActivity.this, ContactListActivty.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void initSettingsButton(){
+        ImageButton ibList=findViewById(R.id.settingsicon);
+        ibList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent=new Intent(MapActivity.this, SettingsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
     }
