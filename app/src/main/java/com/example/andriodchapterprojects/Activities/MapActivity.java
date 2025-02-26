@@ -91,6 +91,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stopLocationUpdates();
                 Intent intent=new Intent(MapActivity.this, ContactListActivty.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -102,7 +103,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                stopLocationUpdates();
                 Intent intent=new Intent(MapActivity.this, SettingsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -130,26 +131,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         };
     }
 
-    private void startLocationUpdates(){
-        if(Build.VERSION.SDK_INT>=23 && ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+    private void startLocationUpdates() {
+        if (Build.VERSION.SDK_INT >=23 && ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                 getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) return;
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-        ;
+                PackageManager.PERMISSION_GRANTED) {
+            return ;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest,
+                locationCallback, null);
+        gmap.setMyLocationEnabled(true);
+    }
+    private void stopLocationUpdates () {
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getBaseContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getBaseContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return ;
+        }
+
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         gmap = googleMap;
         gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        LatLng defaultLocation = new LatLng(37.7749, -122.4194); // San Francisco, example
-        gmap.addMarker(new MarkerOptions().position(defaultLocation).title("Default Location"));
-        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12.0f));
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            gmap.setMyLocationEnabled(true);
-            startLocationUpdates();
-        }
 
         try {
             if (Build.VERSION.SDK_INT >= 23) {
