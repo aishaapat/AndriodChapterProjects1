@@ -30,6 +30,7 @@ public class MapActivity extends AppCompatActivity {
         initListButton();
         initSettingsButton();
     }
+
     public void initListButton(){
         ImageButton ibList=findViewById(R.id.contactslistbutton);
         ibList.setOnClickListener(new View.OnClickListener() {

@@ -46,6 +46,11 @@
             app:srcCompat="@drawable/settingsicon"
             tools:ignore="RedundantDescriptionCheck" />
     </LinearLayout>
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
