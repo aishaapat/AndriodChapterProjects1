@@ -51,7 +51,7 @@ public class MapActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        //initGetLocationButton();
+        initGetLocationButton();
         //initGetNetButton();
         initSettingsButton();
         initListButton();
@@ -274,7 +274,7 @@ public class MapActivity extends AppCompatActivity {
     }
     ///
     private void initGetLocationButton1() {
-        Button locationButton = (Button) findViewById(R.id.buttonGetLocation);
+        Button locationButton = (Button) findViewById(R.id.buttonGetnet);
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
