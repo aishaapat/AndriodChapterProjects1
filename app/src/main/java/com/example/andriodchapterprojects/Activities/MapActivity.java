@@ -327,6 +327,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void initMapTypeButtons() {
         RadioGroup rgMapType = findViewById(R.id.radioGroupMapType);
+        RadioButton rgSate=findViewById(R.id.radioButtonSatellite);
         rgMapType.setOnCheckedChangeListener (new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -334,6 +335,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (rbNormal.isChecked()) {
                     gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 } else {
+                    rbNormal.setChecked(false);
+                    rgSate.setChecked(true);
                     gmap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 }
             }
