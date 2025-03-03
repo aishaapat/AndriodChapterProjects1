@@ -1,8 +1,11 @@
 package com.example.andriodchapterprojects.Activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +17,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -61,12 +65,14 @@ public class ContactListActivty extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        monitorBattery();
         initListButton();
         initMapButton();
         initSettingsButton();
         initAddContactButtob();
         initDeleteSwitch(contactAdapter1);
+
+
     }
     @Override
     public void onResume(){
@@ -174,6 +180,21 @@ public class ContactListActivty extends AppCompatActivity {
                 contactAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    private void monitorBattery(){
+        BroadcastReceiver batteryReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                double batteryLevel=intent.getIntExtra(BatteryManager.EXTRA_LEVEL,0);
+                double levelScale=intent.getIntExtra(BatteryManager.EXTRA_SCALE,0);
+                int batteryPercent=(int) Math.floor(batteryLevel/levelScale *100);
+                TextView textBatteryState=(TextView)findViewById(R.id.textBatteryLevel);
+                textBatteryState.setText(batteryPercent+"%");
+            }
+        };
+        IntentFilter filter=new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(batteryReceiver,filter);
     }
 
 

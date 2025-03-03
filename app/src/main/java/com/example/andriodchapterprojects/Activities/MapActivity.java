@@ -7,6 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -17,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -54,6 +59,36 @@ import java.util.List;
 
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private SensorEventListener mySensorEventListener=new SensorEventListener() {
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float[] accelerometerValues = new float[3];
+            float[] magneticValues=new float[3];
+            if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER) accelerometerValues=event.values;
+            if (event.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD)magneticValues=event.values;
+            if(accelerometerValues!=null && magneticValues!=null){
+                float R[]=new float[9];
+                float I[]=new float[9];
+                boolean success=SensorManager.getRotationMatrix(R,I,accelerometerValues,magneticValues);
+                if(success){
+                    float orientation[] = new float[3];
+                    SensorManager.getOrientation(R,orientation);
+                    float azimut=(float) Math.toDegrees(orientation[0]);
+                    if(azimut < 0.0f)azimut +=360.0f;
+                    String directon;
+                    if(azimut >=315 || azimut<45)directon="N";
+                    else if (azimut>=225 && azimut<315) directon="W";
+                    else if (azimut>=135 && azimut <225) directon="S";
+                    else directon="E";
+                    textDirection.setText(directon);
+                }
+
+            }
+        }
+
+    };
     final int PERMISSION_REQUEST_LOCATION = 101;
     GoogleMap gmap;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -62,6 +97,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     ArrayList<Contact> contacts = new ArrayList<>();
     Contact currentContact = null;
+
+    SensorManager sensorManager;
+    Sensor accelerometer;
+    Sensor magnetometer;
+    TextView textDirection;
 
 
     @Override
@@ -98,6 +138,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         createLocationRequest();
         createLocationCallback();
         initMapTypeButtons();
+        sensorManager=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetometer=sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if(accelerometer!=null && magnetometer!=null){
+            sensorManager.registerListener(mySensorEventListener,accelerometer,SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(mySensorEventListener,magnetometer,SensorManager.SENSOR_DELAY_UI);
+        }
+        else{
+            Toast.makeText(this,"Sensors not found",Toast.LENGTH_LONG).show();
+        }
+        textDirection=(TextView) findViewById(R.id.textHeading);
 
 
     }
@@ -342,5 +393,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
     }
+
+
+
   
 }
