@@ -61,21 +61,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             return insets;
         });
 
-        cameraLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null && data.getExtras() != null) {
-                            Bitmap photo = (Bitmap) data.getExtras().get("data");
-                            Bitmap scaledPhoto = Bitmap.createScaledBitmap(photo, 144, 144, true);
-                            ImageButton imageButton = findViewById(R.id.imageContact);
-                            imageButton.setImageBitmap(scaledPhoto);
-                            currentContact.setPicture(scaledPhoto);
-                        }
-                    }
-                }
-        );
+
 
 
         initListButton();
@@ -91,6 +77,21 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         initSaveButton();
         initCallFunction();
         initImageButton();
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.getExtras() != null) {
+                            Bitmap photo = (Bitmap) data.getExtras().get("data");
+                            Bitmap scaledPhoto = Bitmap.createScaledBitmap(photo, 144, 144, true);
+                            ImageButton imageButton = findViewById(R.id.imageContact);
+                            imageButton.setImageBitmap(scaledPhoto);
+                            currentContact.setPicture(scaledPhoto);
+                        }
+                    }
+                }
+        );
 
     }
     @Override
@@ -423,9 +424,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         if(currentContact.getPicture() != null){
             picture.setImageBitmap(currentContact.getPicture());
         }
-        else {
-            picture.setImageResource(R.drawable.stockimage);
-        }
+        else picture.setImageResource(R.drawable.stockimage);
+
 
         //set texts now
 
@@ -446,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
            public boolean onLongClick(View v) {
                checkPhonePermission(currentContact.getPhoneNumber());
-               return false;
+               return true;
             }
       });
 
@@ -455,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public boolean onLongClick(View v) {
                 checkPhonePermission(currentContact.getCellNumber());
-                return false;
+                return true;
             }
         });
     }
