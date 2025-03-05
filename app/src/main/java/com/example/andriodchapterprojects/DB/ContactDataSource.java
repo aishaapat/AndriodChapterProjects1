@@ -147,7 +147,7 @@ public class ContactDataSource
             Calendar calendar=Calendar.getInstance();
             calendar.setTimeInMillis(Long.valueOf(cursor.getString(9)));
             contact.setBirthday(calendar);
-            byte[] photo = cursor.getBlob(10); // Assuming `contactphoto` is in the 10th column (index 10)
+            byte[] photo = cursor.getBlob(10);
             if (photo != null && photo.length > 0) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
                 contact.setPicture(bitmap);

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         initTextChangedEvents();
         initCallFunction();
         initImageButton();
+        sendMessage();
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -120,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 break;
             }
         }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.SEND_SMS}, 1);
+        }
+
     }
 
     public void initListButton(){
@@ -184,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         Button buttonchange=findViewById(R.id.btnBirthday);
         Button buttonsave=findViewById(R.id.savebutton);
         ImageButton picture=findViewById(R.id.imageContact);
+        Button messageButton=findViewById(R.id.callButton);
 
         editName.setEnabled(enabled);
         editAddress.setEnabled(enabled);
@@ -199,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         if(enabled){
             editName.requestFocus();
         }
+        messageButton.setEnabled(enabled);
 
     }
     private void initChangeDateButton() {
@@ -458,6 +468,26 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         });
     }
 
+    private void sendMessage(){
+        Button setCall=findViewById(R.id.callButton);
+        setCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              Message();
+
+            }
+        });
+    }
+    private void Message() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("sms:" + currentContact.getPhoneNumber())); // Use 'sms:' scheme
+        intent.putExtra("Assignment", "Hello!"); // Pre-fill message body (optional)
+        startActivity(intent);
+    }
+
+
+
+
     private void checkPhonePermission(String phoneNumber){
         if(Build.VERSION.SDK_INT>=23)
         {
@@ -521,21 +551,5 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         cameraLauncher.launch(cameraIntent);  // Use the ActivityResultLauncher to handle the result
     }
 
-
-
-
-//   protected void onActivityResult(int requestCode, int resultCode, Intent data){
-//
-//      super.onActivityResult(requestCode, resultCode, data);
-//      if(requestCode==CAMERA_REQUEST){
-//           if(resultCode==RESULT_OK){
-//               Bitmap photo=(Bitmap) data.getExtras().get("data");
-//               Bitmap scaledPhoto=Bitmap.createScaledBitmap(photo,144,144,true);
-//               ImageButton imageButton=(ImageButton) findViewById(R.id.imageContact);
-//               imageButton.setImageBitmap(scaledPhoto);
-//               currentContact.setPicture(scaledPhoto);
-//           }
-//        }
-//   }
 
 }
