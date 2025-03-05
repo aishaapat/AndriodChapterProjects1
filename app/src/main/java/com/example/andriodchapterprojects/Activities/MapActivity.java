@@ -62,31 +62,39 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private SensorEventListener mySensorEventListener=new SensorEventListener() {
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        private float[] accelerometerValues = new float[3];
+        private float[] magneticValues = new float[3];
+
         @Override
         public void onSensorChanged(SensorEvent event) {
-            float[] accelerometerValues = new float[3];
-            float[] magneticValues=new float[3];
-            if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER) accelerometerValues=event.values;
-            if (event.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD)magneticValues=event.values;
-            if(accelerometerValues!=null && magneticValues!=null){
-                float R[]=new float[9];
-                float I[]=new float[9];
-                boolean success=SensorManager.getRotationMatrix(R,I,accelerometerValues,magneticValues);
-                if(success){
-                    float orientation[] = new float[3];
-                    SensorManager.getOrientation(R,orientation);
-                    float azimut=(float) Math.toDegrees(orientation[0]);
-                    if(azimut < 0.0f)azimut +=360.0f;
-                    String directon;
-                    if(azimut >=315 || azimut<45)directon="N";
-                    else if (azimut>=225 && azimut<315) directon="W";
-                    else if (azimut>=135 && azimut <225) directon="S";
-                    else directon="E";
-                    textDirection.setText(directon);
-                }
+            if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                System.arraycopy(event.values, 0, accelerometerValues, 0, event.values.length);
+            } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                System.arraycopy(event.values, 0, magneticValues, 0, event.values.length);
+            }
 
+            if (accelerometerValues != null && magneticValues != null) {
+                float[] R = new float[9];
+                float[] I = new float[9];
+                boolean success = SensorManager.getRotationMatrix(R, I, accelerometerValues, magneticValues);
+                if (success) {
+                    float[] orientation = new float[3];
+                    SensorManager.getOrientation(R, orientation);
+                    float azimuth = (float) Math.toDegrees(orientation[0]);
+                    azimuth = (azimuth + 360) % 360;
+                    String direction = getDirectionFromAzimuth(azimuth);
+                    textDirection.setText(direction);
+                }
             }
         }
+
+        private String getDirectionFromAzimuth(float azimuth) {
+            if (azimuth >= 315 || azimuth < 45) return "N";
+            else if (azimuth >= 225) return "W";
+            else if (azimuth >= 135) return "S";
+            else return "E";
+        }
+
 
     };
     final int PERMISSION_REQUEST_LOCATION = 101;
@@ -137,7 +145,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         createLocationRequest();
         createLocationCallback();
-        initMapTypeButtons();
+
         sensorManager=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer=sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -190,7 +198,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                if(locationResult==null) return;
                 for(Location location : locationResult.getLocations()){
                     Toast.makeText(getBaseContext(),"Lat: " + location.getLatitude()+ " Long: "+ location.getLongitude()+" Accuracy" +
                             ": "+ location.getAccuracy(),Toast.LENGTH_LONG).show();
@@ -215,10 +222,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(getBaseContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             return ;
         }
 
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        if (fusedLocationProviderClient != null) {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        }
     }
 
     @Override

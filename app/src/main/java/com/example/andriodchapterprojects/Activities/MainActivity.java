@@ -21,6 +21,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     final int CAMERA_REQUEST=1888;
 
+    private ActivityResultLauncher<Intent> cameraLauncher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.getExtras() != null) {
+                            Bitmap photo = (Bitmap) data.getExtras().get("data");
+                            Bitmap scaledPhoto = Bitmap.createScaledBitmap(photo, 144, 144, true);
+                            ImageButton imageButton = findViewById(R.id.imageContact);
+                            imageButton.setImageBitmap(scaledPhoto);
+                            currentContact.setPicture(scaledPhoto);
+                        }
+                    }
+                }
+        );
+
+
         initListButton();
         initMapButton();
         initSettingsButton();
@@ -419,14 +441,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     private void initCallFunction(){
-        EditText editPhone=(EditText) findViewById(R.id.editHome);
-        editPhone.setOnLongClickListener(new View.OnLongClickListener() {
+       EditText editPhone=(EditText) findViewById(R.id.editHome);
+       editPhone.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                checkPhonePermission(currentContact.getPhoneNumber());
-                return false;
+           public boolean onLongClick(View v) {
+               checkPhonePermission(currentContact.getPhoneNumber());
+               return false;
             }
-        });
+      });
+
         EditText editCell=(EditText) findViewById(R.id.editCell);
         editCell.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -506,27 +529,25 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     private void takePhoto(){
         Intent cameraIntent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivity(cameraIntent,CAMERA_REQUEST);
-    }
-
-    private void startActivity(Intent cameraIntent, int cameraRequest) {
-
+        startActivity(cameraIntent);
     }
 
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
 
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==CAMERA_REQUEST){
-            if(resultCode==RESULT_OK){
-                Bitmap photo=(Bitmap) data.getExtras().get("data");
-                Bitmap scaledPhoto=Bitmap.createScaledBitmap(photo,144,144,true);
-                ImageButton imageButton=(ImageButton) findViewById(R.id.imageContact);
-                imageButton.setImageBitmap(scaledPhoto);
-                currentContact.setPicture(scaledPhoto);
-            }
-        }
-    }
+
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+//
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(requestCode==CAMERA_REQUEST){
+//            if(resultCode==RESULT_OK){
+//                Bitmap photo=(Bitmap) data.getExtras().get("data");
+//                Bitmap scaledPhoto=Bitmap.createScaledBitmap(photo,144,144,true);
+//                ImageButton imageButton=(ImageButton) findViewById(R.id.imageContact);
+//                imageButton.setImageBitmap(scaledPhoto);
+//                currentContact.setPicture(scaledPhoto);
+//            }
+//        }
+//    }
 
 
 
