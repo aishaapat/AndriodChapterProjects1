@@ -3,9 +3,11 @@ package com.example.andriodchapterprojects.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     private Contact currentContact;
     final int PERMISSION_REQUEST_PHONE=102;
 
+    final int PERMISSION_REQUEST_CAMERA=103;
+
+    final int CAMERA_REQUEST=1888;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         initTextChangedEvents();
         initSaveButton();
         initCallFunction();
+        initImageButton();
 
     }
     @Override
@@ -83,7 +90,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                     Toast.makeText(MainActivity.this,"You may now call from this app",Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Toast.makeText(MainActivity.this,"You will not bee able to call",Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this,"You will not be able to call",Toast.LENGTH_LONG).show();
+                }
+            }
+            case PERMISSION_REQUEST_CAMERA:{
+                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    takePhoto();
+                }
+                else{
+                    Toast.makeText(MainActivity.this,"You will not be able to save contact pics",Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -149,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         EditText editEmail=findViewById(R.id.editEmail);
         Button buttonchange=findViewById(R.id.btnBirthday);
         Button buttonsave=findViewById(R.id.savebutton);
+        ImageButton picture=findViewById(R.id.imageContact);
 
         editName.setEnabled(enabled);
         editAddress.setEnabled(enabled);
@@ -160,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         editEmail.setEnabled(enabled);
         buttonchange.setEnabled(enabled);
         buttonsave.setEnabled(enabled);
+        picture.setEnabled(enabled);
         if(enabled){
             editName.requestFocus();
         }
@@ -446,5 +463,65 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         }
         else startActivity(intent);
     }
+
+    private void initImageButton(){
+        ImageButton ib = findViewById(R.id.imageContact);
+        ib.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.CAMERA)) {
+                            Snackbar.make(findViewById(R.id.activity_main_page),
+                                            "This app needs permission to take pictures", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("OK", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            ActivityCompat.requestPermissions(MainActivity.this,
+                                                    new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+                                        }
+                                    }).show();
+                        } else {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+                        }
+                    }
+                    else{
+                        takePhoto();
+                    }
+                }
+                else{
+                    takePhoto();
+                }
+            }
+        });
+    }
+
+    private void takePhoto(){
+        Intent cameraIntent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivity(cameraIntent,CAMERA_REQUEST);
+    }
+
+    private void startActivity(Intent cameraIntent, int cameraRequest)
+    {
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==CAMERA_REQUEST){
+            if(resultCode==RESULT_OK){
+                Bitmap photo=(Bitmap) data.getExtras().get("data");
+                Bitmap scaledPhoto=Bitmap.createScaledBitmap(photo,144,144,true);
+                ImageButton imageButton=(ImageButton) findViewById(R.id.imageContact);
+                imageButton.setImageBitmap(scaledPhoto);
+                currentContact.setPicture(scaledPhoto);
+            }
+        }
+    }
+
+
+
+
 
 }

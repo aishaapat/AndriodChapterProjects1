@@ -1,5 +1,7 @@
 package com.example.andriodchapterprojects.DB;
 
+import android.graphics.Bitmap;
+
 import java.util.Calendar;
 
 public class Contact
@@ -14,6 +16,8 @@ public class Contact
     private String cellNumber;
     private String eMail;
     private Calendar birthday;
+
+    private Bitmap picture;
     public Contact(int contactID, String contactName, String streetAddress, String city, String state, String zipCode, String phoneNumber, String cellNumber, String eMail, Calendar birthday) {
         this.contactID = contactID;
         this.contactName = contactName;
@@ -109,5 +113,13 @@ public class Contact
 
     public void setBirthday(Calendar birthday) {
         this.birthday = birthday;
+    }
+
+    public void setPicture(Bitmap picture) {
+        this.picture = picture;
+    }
+
+    public Bitmap getPicture() {
+        return picture;
     }
 }

@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
     <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <permission android:name="com.example.AndriodChapterProjects.permission.MAPS_RECEIVE"
         android:protectionLevel="signature"/>
