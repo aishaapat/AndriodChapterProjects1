@@ -81,28 +81,28 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     }
     @Override
-    public void onRequestPermissionsResult (int requestCode, String permissions[], int[] grantResults){
-
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
+        switch (requestCode) {
             case PERMISSION_REQUEST_PHONE: {
-                if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(MainActivity.this,"You may now call from this app",Toast.LENGTH_LONG).show();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "You may now call from this app", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "You will not be able to call", Toast.LENGTH_LONG).show();
                 }
-                else{
-                    Toast.makeText(MainActivity.this,"You will not be able to call",Toast.LENGTH_LONG).show();
-                }
+                break;
             }
-            case PERMISSION_REQUEST_CAMERA:{
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+            case PERMISSION_REQUEST_CAMERA: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     takePhoto();
+                } else {
+                    Toast.makeText(MainActivity.this, "You will not be able to save contact pics", Toast.LENGTH_LONG).show();
                 }
-                else{
-                    Toast.makeText(MainActivity.this,"You will not be able to save contact pics",Toast.LENGTH_LONG).show();
-                }
+                break;
             }
         }
     }
+
     public void initListButton(){
         ImageButton ibList=findViewById(R.id.contactslistbutton);
         ibList.setOnClickListener(new View.OnClickListener() {
@@ -397,6 +397,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         EditText editPhone=findViewById(R.id.editHome);
         EditText editEmail=findViewById(R.id.editEmail);
         TextView birth=findViewById(R.id.textBirthday);
+        ImageButton picture=(ImageButton)findViewById(R.id.imageContact);
+        if(currentContact.getPicture() != null){
+            picture.setImageBitmap(currentContact.getPicture());
+        }
+        else {
+            picture.setImageResource(R.drawable.stockimage);
+        }
 
         //set texts now
 
@@ -502,9 +509,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         startActivity(cameraIntent,CAMERA_REQUEST);
     }
 
-    private void startActivity(Intent cameraIntent, int cameraRequest)
-    {
+    private void startActivity(Intent cameraIntent, int cameraRequest) {
+
     }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
 

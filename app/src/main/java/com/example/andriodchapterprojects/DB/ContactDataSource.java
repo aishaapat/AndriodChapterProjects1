@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 
 
+import java.io.ByteArrayOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +41,12 @@ public class ContactDataSource
             intialValue.put("cellnumber",c.getCellNumber());
             intialValue.put("email",c.geteMail());
             intialValue.put("birthday",String.valueOf(c.getBirthday().getTimeInMillis()));
+            if(c.getPicture() != null){
+                ByteArrayOutputStream baos=new ByteArrayOutputStream();
+                c.getPicture().compress(Bitmap.CompressFormat.PNG,100,baos);
+                byte[] photo=baos.toByteArray();
+                intialValue.put("contactphoto",photo);
+            }
             didSucceed=database.insert("contact",null,intialValue)>0;
         } catch (Exception e)
         {
@@ -60,7 +68,12 @@ public class ContactDataSource
             intialValue.put("cellnumber", c.getCellNumber());
             intialValue.put("email", c.geteMail());
             intialValue.put("birthday", String.valueOf(c.getBirthday().getTimeInMillis()));
-
+            if(c.getPicture() != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                c.getPicture().compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] photo = baos.toByteArray();
+                intialValue.put("contactphoto", photo);
+            }
             didSucceed=database.update("contact",intialValue,"_id="+rowId,null)>0;
         } catch (Exception e) {
             throw new RuntimeException(e);
